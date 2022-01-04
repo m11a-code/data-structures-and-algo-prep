@@ -1,9 +1,8 @@
 import java.util.Arrays;
-import java.util.Random;
 
 public class QuickSort {
     public static void main(String[] args) {
-        int[] items = {1,4,3,6,6,4,3,7,9,87,234,56,3};
+        int[] items = {1, 4, 3, 6, 6, 4, 3, 7, 9, 87, 234, 56, 3};
         System.out.println("Input array: " + Arrays.toString(items));
         System.out.println("Output array:" + Arrays.toString(quicksort(items)));
     }
@@ -21,20 +20,47 @@ public class QuickSort {
         swap(items, start, pivotIndex);
 
         // Partition
-        // Lomuto's partitioning
-        int smaller = start;
-        for (int bigger = start + 1; bigger <= end; bigger++) {
-            if (items[bigger] < items[start]) {
-                ++smaller;
-                swap(items, smaller, bigger);
-            }
-        }
-        swap(items, start, smaller);
+        int placedPivot = partition(items, start, end, PartitioningScheme.HOARE);
 
         // Go left
-        helper(items, start, smaller - 1);
+        helper(items, start, placedPivot - 1);
         // Go right
-        helper(items, smaller + 1, end);
+        helper(items, placedPivot + 1, end);
+    }
+
+    private static int partition(int[] items, int start, int end, PartitioningScheme scheme) {
+        if (scheme == PartitioningScheme.LOMUTO) {
+            // Lomuto's partitioning
+            int smaller = start;
+            for (int bigger = start + 1; bigger <= end; bigger++) {
+                if (items[bigger] < items[start]) {
+                    ++smaller;
+                    swap(items, smaller, bigger);
+                }
+            }
+            swap(items, start, smaller);
+
+            return smaller;
+        }
+        // if (scheme == PartitioningScheme.HOARE)
+        // Hoare's partitioning
+        int smaller = start + 1, bigger = end;
+
+        while (smaller <= bigger) {
+            if (items[smaller] < items[start]) {
+                ++smaller;
+            } else if (items[bigger] > items[start]) {
+                --bigger;
+            } else {
+                swap(items, smaller, bigger);
+                ++smaller;
+                --bigger;
+            }
+        }
+
+        swap(items, start, bigger);
+
+        return bigger;
     }
 
     private static int choosePivot(int[] items, int start, int end) {
@@ -50,6 +76,10 @@ public class QuickSort {
     private static int[] quicksort(int[] items) {
         helper(items, 0, items.length - 1);
         return items;
+    }
+
+    private enum PartitioningScheme {
+        HOARE, LOMUTO
     }
 
 }
