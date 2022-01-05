@@ -36,13 +36,13 @@ public class RadixSort {
         System.arraycopy(target, 0, items, 0, items.length);
     }
 
-    // function to implement radix sort
+    // Function to implement radix sort
     private static int[] radixsort(int[] items) {
 
         // Get the max element in the array.
         int max = Arrays.stream(items).max().orElseThrow();
 
-        // Apply counting sort to sort elements based on place value
+        // Apply counting sort to sort elements based on place value.
         for (int place = 1; max / place > 0; place *= 10) {
             countingSort(items, place);
         }
