@@ -15,6 +15,13 @@ import java.util.Stack;
  * ```
  * Input: temperatures = [73,74,75,71,69,72,76,73]
  * Output: [1,1,4,2,1,1,0,0]
+ *
+ * ---
+ *
+ * Stack implementation allows for optimal run time complexity.
+ *
+ * Time Complexity: O(n) because only need to read through array one time.
+ * Space Complexity: O(n) because at most n entries on Stack when input array is of size n.
  */
 public class DailyTemperatures {
     public static void main(String[] args) {
