@@ -26,7 +26,7 @@ public class HeapSort {
             // Move the current root node to the end.
             swap(items, i, 0);
             // Heapify the reduced heap
-            maxHeapify(items, i, 0);
+            maxHeapify(items, i - 1, 0);
         }
 
         return items;
