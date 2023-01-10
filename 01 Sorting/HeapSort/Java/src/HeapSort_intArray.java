@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class HeapSort {
+public class HeapSort_intArray {
 
     public static void main(String[] args) {
         int[] items = {1, 4, 3, -6, 6, 4, 3, 7, 9, 87, 234, 56, 3};
