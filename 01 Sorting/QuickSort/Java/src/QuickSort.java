@@ -3,8 +3,13 @@ import java.util.Arrays;
 public class QuickSort {
     public static void main(String[] args) {
         int[] items = {1, 4, 3, 6, 6, 4, 3, 7, 9, 87, 234, 56, 3};
-        System.out.println("Input array: " + Arrays.toString(items));
-        System.out.println("Output array:" + Arrays.toString(quicksort(items)));
+        System.out.println("Input array:");
+        System.out.println(Arrays.toString(items));
+
+        int[] result = quicksort(items);
+
+        System.out.println("Output array:");
+        System.out.println(Arrays.toString(result));
     }
 
     private static void helper(int[] items, int start, int end) {
@@ -15,7 +20,7 @@ public class QuickSort {
 
         // Internal node work
         // Choose the pivot
-        int pivotIndex = choosePivot(items, start, end);
+        int pivotIndex = choosePivot(start, end);
         // Swap pivot
         swap(items, start, pivotIndex);
 
@@ -63,7 +68,7 @@ public class QuickSort {
         return bigger;
     }
 
-    private static int choosePivot(int[] items, int start, int end) {
+    private static int choosePivot(int start, int end) {
         return (int) ((Math.random() * (end - start)) + start);
     }
 
