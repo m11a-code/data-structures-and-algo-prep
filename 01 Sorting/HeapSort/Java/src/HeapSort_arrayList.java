@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class HeapSort_arrayList {
@@ -22,7 +23,7 @@ public class HeapSort_arrayList {
             }
 
             for (int i = n - 1; i >= 0; --i) {
-                swap(items, 0, i);
+                Collections.swap(items, 0, i);
                 heapifyDown(items, i, 0);
             }
 
@@ -43,7 +44,7 @@ public class HeapSort_arrayList {
         // This allows us to build the sorted array in place.
         for (int i = n - 1; i > 0; --i) {
             // Move the current root node to the end.
-            swap(items, i, 0);
+            Collections.swap(items, i, 0);
             // Heapify the reduced heap
             // Pass in *SIZE* of new array so that index of last element can be calculated from
             // that and as a result, ignore the newly swapped element so that everything is done
@@ -86,7 +87,7 @@ public class HeapSort_arrayList {
         // If the largest is not still the root value
         if (largestIndex != index) {
             // Swap the largest value with the root and check on the subtree
-            swap(items, index, largestIndex);
+            Collections.swap(items, index, largestIndex);
             // Check on the subtree to make sure the swap didn't violate heap property there, and if it did, heapify it.
             maxHeapify(items, sizeOfHeap, largestIndex);
         }
@@ -98,57 +99,15 @@ public class HeapSort_arrayList {
         // swap val in curr node with the value in the larger child
         int largerIndex = largerChildIndex(items, sizeOfHeap, curr);
         while (largerIndex != -1 && items.get(curr) < items.get(largerIndex)) {
-            swap(items, curr, largerIndex);
+            Collections.swap(items, curr, largerIndex);
 
             curr = largerIndex;
             largerIndex = largerChildIndex(items, sizeOfHeap, curr);
         }
     }
 
-    // Swap without needing temp variable.
-    static void swap(ArrayList<Integer> items, int first, int second) {
-
-        // Necessary if using ArrayLists.
-        // Also, a simple enough optimization.
-        if (first == second) {
-            return;
-        }
-
-        // Swapping logic:
-        // NOTE: TESTED WITH VALUES THAT OVERFLOW AND STILL WORKS
-        //
-        // FIRST = 25, SECOND = 23
-        //
-        // FIRST = FIRST + SECOND
-        // 25 + 23 = 48
-        //
-        // SECOND = FIRST - SECOND
-        // 48 - 23 = 25
-        //
-        // FIRST = FIRST - SECOND
-        // 48 - 25 = 23
-        //
-        // NOTE TO SELF: Deleted one line version because it only works with arrays so best to
-        // just use three line version since it's more consistent.
-        // ArrayList:
-        items.set(first, items.get(first) + items.get(second));
-        items.set(second, items.get(first) - items.get(second));
-        items.set(first, items.get(first) - items.get(second));
-        // Array:
-        // items[first] = items[first] + items[second];
-        // items[second] = items[first] - items[second];
-        // items[first] = items[first] - items[second];
-    }
-
     enum ImplementationVersion {
         OMKAR, MATT
     }
-
-    // Swap with temp variable.
-    // private static void swap(int[] items, int first, int second) {
-    //     int temp = items[first];
-    //     items[first] = items[second];
-    //     items[second] = temp;
-    // }
 }
 
