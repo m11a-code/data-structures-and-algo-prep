@@ -66,7 +66,8 @@ public class RadixSort {
         for (int item : items) {
             int digit = (int)((item / place) % 10) + 9;
             if (actions == ACTIONS.DEBUG || actions == ACTIONS.BOTH) {
-                System.out.println("Examining digit " + (digit - 9) + " (at index " + digit + " in count array) from item " + item + " at place " + String.valueOf(place).length());
+                System.out.println("Examining digit " + (digit - 9) + " (at index " + digit + " in count array) " +
+                        "from item " + item + " at place " + String.valueOf(place).length());
             }
             ++count[digit];
         }
