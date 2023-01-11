@@ -1,19 +1,22 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class RadixSortWithNegatives_BucketSortPostivesAndNegatives {
 
     static final int RandomizedArraySize = 1000000000;
-    static ACTIONS actions = ACTIONS.TIMER;
+    static ACTIONS actions = ACTIONS.DEBUG;
     static INPUT input = INPUT.SIMPLE;
-    static IMPLEMENTATION impl = IMPLEMENTATION.BUCKET;
+    static IMPLEMENTATION impl = IMPLEMENTATION.RADIX;
 
     public static void main(String[] args) {
         int[] items;
         if (input == INPUT.SIMPLE) {
-            items = new int[]{0, 1, 2, 3, 4, -1, -6, -6, 7, 8, 9, 10, -100, 23, -4235, 3, 53, 45, 522, 3234, 222,
-                    4345, 7, 89, 45, 765, 68, 54, 465, 23, 42, 457, 8, 786, 574, 563, 45, 45, 65, 78};
+            items = new int[] {5, 8, 3, 9, 4, 1, 7};
+//            items = new int[]{0, 1, 2, 3, 4, -1, -6, -6, 7, 8, 9, 10, -100, 23, -4235, 3, 53, 45, 522, 3234, 222,
+//                    4345, 7, 89, 45, 765, 68, 54, 465, 23, 42, 457, 8, 786, 574, 563, 45, 45, 65, 78};
 //            items = new int[] {1364025793, -222222229, -1295119823, 2043400588, 594134920, 2080480370, 1858863360, 1972939638, 326661553, -222222223};
         } else {
             items = new int[RandomizedArraySize];
@@ -45,6 +48,10 @@ public class RadixSortWithNegatives_BucketSortPostivesAndNegatives {
             long start = System.currentTimeMillis();
 
             if (impl == IMPLEMENTATION.RADIX) {
+                // ArrayList
+//                ArrayList<Integer> arr = Arrays.stream(items).boxed().collect(Collectors.toCollection(ArrayList::new));
+//                result = radixSort(arr).stream().mapToInt(Integer::intValue).toArray();
+                // Array
                 result = radixSort(items);
             } else {
                 result = bucketsort(items);
@@ -56,6 +63,10 @@ public class RadixSortWithNegatives_BucketSortPostivesAndNegatives {
         } else {
             System.out.println();
             if (impl == IMPLEMENTATION.RADIX) {
+                // ArrayList
+//                ArrayList<Integer> arr = Arrays.stream(items).boxed().collect(Collectors.toCollection(ArrayList::new));
+//                result = radixSort(arr).stream().mapToInt(Integer::intValue).toArray();
+                // Array
                 result = radixSort(items);
             } else {
                 result = bucketsort(items);
@@ -226,6 +237,34 @@ public class RadixSortWithNegatives_BucketSortPostivesAndNegatives {
         return items;
     }
 
+    private static ArrayList<Integer> radixSort(ArrayList<Integer> items) {
+
+        if (items == null) {
+            return null;
+        }
+        if (items.size() <= 1) {
+            return items;
+        }
+
+        int max = Collections.max(items);
+
+        // Apply a slightly modified counting sort to sort elements based on the significant digit that is currently
+        // being examined while still being able to handle negative numbers.
+        // A bit easier for debugging:
+//        long place = 1;
+//        while (max / place > 0) {
+//            countingSort(items, place);
+//            place *= 10;
+//            System.out.println("max / place: " + (max / place));
+//            System.out.println();
+//        }
+        for (long place = 1; max / place > 0; place *= 10) {
+            countingSort_SupportsNegativesDirectlyWithBiggerCountArray(items, place);
+        }
+
+        return items;
+    }
+
     private static void countingSort_SupportsNegativesDirectlyWithBiggerCountArray(int[] items, long place) {
         int[] count = new int[19];
         // [-9, -8, -7, ..., 7, 8, 9] -> size of 19.
@@ -278,6 +317,66 @@ public class RadixSortWithNegatives_BucketSortPostivesAndNegatives {
         if (actions == ACTIONS.DEBUG || actions == ACTIONS.BOTH) {
             System.out.println("Updated array after " + String.valueOf(place).length() + " calculation:");
             System.out.println(Arrays.toString(items));
+            System.out.println();
+        }
+    }
+
+    private static void countingSort_SupportsNegativesDirectlyWithBiggerCountArray(ArrayList<Integer> items, long place) {
+        int[] count = new int[19];
+        // [-9, -8, -7, ..., 7, 8, 9] -> size of 19.
+
+        if (actions == ACTIONS.DEBUG || actions == ACTIONS.BOTH) {
+            System.out.println("Input array for " + String.valueOf(place).length() + " calculation:");
+            System.out.println(items);
+        }
+
+        // Phase 1: Count
+        // Calculate count of elements
+        for (int item : items) {
+            int digit = (int) ((item / place) % 10) + 9;
+            if (actions == ACTIONS.DEBUG || actions == ACTIONS.BOTH) {
+                System.out.println("Examining digit " + (digit - 9) + " (at index " + digit + " in count array) " +
+                        "from item " + item + " at place " + String.valueOf(place).length());
+            }
+            ++count[digit];
+        }
+
+        if (actions == ACTIONS.DEBUG || actions == ACTIONS.BOTH) {
+            System.out.println("Count array for " + String.valueOf(place).length() + " digit position:");
+            System.out.println(Arrays.toString(count));
+        }
+
+        // Phase 2: Aggregate
+        // Calculate cumulative frequency
+        for (int i = 1; i < 19; ++i) {
+            count[i] += count[i - 1];
+        }
+
+        if (actions == ACTIONS.DEBUG || actions == ACTIONS.BOTH) {
+            System.out.println("Aggregated count array for " + String.valueOf(place).length() + " position:");
+            System.out.println(Arrays.toString(count));
+        }
+
+        // Phase 3: Write to target array
+        // Place the elements in sorted order
+        // NOTE: see CountingSort.java for more detailed comments on CountingSort code and how it works.
+        // This code is only modified from original CountingSort code to isolate the single digit
+        // we're examining and +9 to support negative numbers.
+        int[] target = new int[items.size()];
+        for (int i = items.size() - 1; i >= 0; --i) {
+            int element = (int) ((items.get(i) / place) % 10) + 9;
+            target[count[element] - 1] = items.get(i);
+            --count[element];
+        }
+
+        for (int i = 0; i < target.length; i++) {
+            items.set(i, target[i]);
+        }
+
+//        System.arraycopy(target, 0, items, 0, items.length);
+        if (actions == ACTIONS.DEBUG || actions == ACTIONS.BOTH) {
+            System.out.println("Updated array after " + String.valueOf(place).length() + " calculation:");
+            System.out.println(items);
             System.out.println();
         }
     }
