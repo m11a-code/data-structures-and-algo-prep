@@ -60,6 +60,8 @@ public class CountingSort {
             // they can be inserted to the left of this one and as a result, keep the implementation stable.
             --counts[adjustedOriginalArrayValueGivesIndexInCountsArray];
         }
+
+        Hash
         /*
             Example that helps with visualization.
             Input array:
